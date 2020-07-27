@@ -1,5 +1,4 @@
 backend/lambda/.aws-sam
-backend/lambda/default/default.go
 backend/lambda/default/default.zip
 backend/lambda/echo/echo
 backend/lambda/echo/echo.zip
