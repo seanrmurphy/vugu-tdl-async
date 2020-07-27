@@ -1,0 +1,10 @@
+backend/lambda/.aws-sam
+backend/lambda/default/default.go
+backend/lambda/default/default.zip
+backend/lambda/echo/echo
+backend/lambda/echo/echo.zip
+backend/lambda/onconnect/onconnect
+backend/lambda/onconnect/onconnect.zip
+backend/lambda/ondisconnect/ondisconnect
+backend/lambda/ondisconnect/ondisconnect.zip
+backend/lambda/default/default
