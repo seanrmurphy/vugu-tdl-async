@@ -1,0 +1,45 @@
+
+<html>
+
+<head>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+</head>
+
+<div>
+    <main role="main" class="container text-center">
+
+        <div>
+                <div class="navbar has-text-white has-background-primary">
+                        <div class="navbar-brand">
+                               <h1>Vugu/Serverless/Websockets demo</h1>
+                        </div>
+                </div>
+
+                <div class="container">
+                        <div class="columns">
+                                <div class="column has-text-centered">
+                                        <div class="to-do-list-new-todo">
+                                                <label>Enter text to send via websockets:</label>
+                                                <input type="text" id="new-todo" @keypress='c.Keypress(event)'>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+
+    </main>
+</div>
+
+</html>
+
+
+<script type="application/x-go">
+
+import "nhooyr.io/websocket"
+
+type Root struct {
+        conn *websocket.Conn
+}
+
+</script>
