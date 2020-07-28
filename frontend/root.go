@@ -29,6 +29,20 @@ func (c *Root) init() {
 	}
 	log.Printf("Opened websocket connection...\n")
 
+	go c.receiver()
+}
+
+// this function simply wait for a response from a websocket...
+func (c *Root) receiver() {
+	for {
+		ctx := context.TODO()
+		_, msg, err := c.conn.Read(ctx)
+		if err != nil {
+			log.Printf("Error reading message %v\n", err)
+		} else {
+			log.Printf("Message successfully received %v\n", string(msg))
+		}
+	}
 }
 
 func (c *Root) Keypress(e vugu.DOMEvent) {
