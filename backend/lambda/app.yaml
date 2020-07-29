@@ -30,7 +30,7 @@ Resources:
     Properties:
       Name: SimpleChatWebSocket
       ProtocolType: WEBSOCKET
-      RouteSelectionExpression: "$request.body.action"
+      RouteSelectionExpression: "$request.body.messagetype"
   ConnectRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -96,7 +96,6 @@ Resources:
     Properties:
       ApiId: !Ref SimpleChatWebSocket
       RouteKey: echo
-      #RouteResponseSelectionExpression: "$default"
       AuthorizationType: NONE
       OperationName: EchoRoute
       Target: !Join
@@ -124,6 +123,166 @@ Resources:
       ApiId: !Ref SimpleChatWebSocket
       IntegrationResponseKey: "$default"
       IntegrationId: !Ref EchoInteg
+  CreateTodoRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: create-todo
+      AuthorizationType: NONE
+      OperationName: CreateTodoRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref CreateTodoInteg
+  CreateTodoRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref CreateTodoRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  CreateTodoInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Create Todo Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateTodoFunction.Arn}/invocations
+  CreateTodoIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref CreateTodoInteg
+  DeleteTodoRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: delete-todo
+      AuthorizationType: NONE
+      OperationName: DeleteTodoRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DeleteTodoInteg
+  DeleteTodoRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref DeleteTodoRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  DeleteTodoInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Delete Todo Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteTodoFunction.Arn}/invocations
+  DeleteTodoIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref DeleteTodoInteg
+  UpdateTodoRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: update-todo
+      AuthorizationType: NONE
+      OperationName: UpdateTodoRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref UpdateTodoInteg
+  UpdateTodoRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref UpdateTodoRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  UpdateTodoInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Update Todo Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateTodoFunction.Arn}/invocations
+  UpdateTodoIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref UpdateTodoInteg
+  GetTodoRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: get-todo
+      AuthorizationType: NONE
+      OperationName: GetTodoRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref GetTodoInteg
+  GetTodoRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref GetTodoRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  GetTodoInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Get Todo Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetTodoFunction.Arn}/invocations
+  GetTodoIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref GetTodoInteg
+  ListTodosRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: list-todos
+      AuthorizationType: NONE
+      OperationName: ListTodosRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ListTodosInteg
+  ListTodosRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref ListTodosRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  ListTodosInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: List Todos Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListTodosFunction.Arn}/invocations
+  ListTodosIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref ListTodosInteg
 
   Deployment:
     Type: AWS::ApiGatewayV2::Deployment
@@ -132,6 +291,11 @@ Resources:
     - DefaultRoute
     - DisconnectRoute
     - EchoRoute
+    - CreateTodoRoute
+    - DeleteTodoRoute
+    - GetTodoRoute
+    - UpdateTodoRoute
+    - ListTodosRoute
     Properties:
       ApiId: !Ref SimpleChatWebSocket
   Stage:
