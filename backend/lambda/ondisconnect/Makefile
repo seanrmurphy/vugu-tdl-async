@@ -1,7 +1,9 @@
 GOBUILD=go build
-BINPATH=${PWD}
+FUNCTION=ondisconnect
 
 build:
-	GOOS=linux GOARCH=amd64 ${GOBUILD} -o ${BINPATH}/ondisconnect ondisconnect.go
-	chmod +x ${BINPATH}/ondisconnect
-	zip -j ${BINPATH}/ondisconnect.zip ${BINPATH}/ondisconnect
+	GOOS=linux GOARCH=amd64 ${GOBUILD} -o ${CURDIR}/${FUNCTION} ${FUNCTION}.go
+	chmod +x ${CURDIR}/${FUNCTION}
+	zip -j ${CURDIR}/${FUNCTION}.zip ${CURDIR}/${FUNCTION}
+
+.PHONY: build
