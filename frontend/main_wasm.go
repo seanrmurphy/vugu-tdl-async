@@ -3,13 +3,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"time"
 
 	"flag"
 
 	"github.com/vugu/vugu"
 	"github.com/vugu/vugu/domrender"
+	"nhooyr.io/websocket"
 )
+
+var wsConn *websocket.Conn
 
 func main() {
 
@@ -32,7 +38,7 @@ func main() {
 
 	rootBuilder := &Root{}
 
-	rootBuilder.init()
+	initWSConnection()
 
 	for ok := true; ok; ok = renderer.EventWait() {
 
@@ -44,4 +50,32 @@ func main() {
 		}
 	}
 
+}
+
+func initWSConnection() {
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	var err error
+	wsConn, _, err = websocket.Dial(ctx, websocketService, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Opened websocket connection...\n")
+
+	go receiver()
+}
+
+// this function simply wait for a response from a websocket...
+func receiver() {
+	for {
+		ctx := context.TODO()
+		_, msg, err := wsConn.Read(ctx)
+		if err != nil {
+			log.Printf("Error reading message %v\n", err)
+		} else {
+			log.Printf("Message successfully received %v\n", string(msg))
+		}
+	}
 }
