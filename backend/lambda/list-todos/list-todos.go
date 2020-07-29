@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
@@ -16,10 +17,10 @@ import (
 	"github.com/seanrmurphy/ws-echo/backend/lambda/util"
 )
 
+var tableName string
+
 // GetTodos gets an array of todos and returns them
 func GetTodos() (tarray []model.Todo, e error) {
-
-	tableName := "Todos"
 
 	// Create the dynamo client object
 	sess := session.Must(session.NewSession())
@@ -76,6 +77,8 @@ func HandleRequest(m types.Message) (types.Response, error) {
 		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
+
+	tableName = os.Getenv("TABLE_NAME")
 
 	// TODO(murp): add some error handling here
 	tarray, _ := GetTodos()

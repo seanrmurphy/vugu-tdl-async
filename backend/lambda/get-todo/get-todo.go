@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
@@ -15,6 +16,8 @@ import (
 	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
 	"github.com/seanrmurphy/ws-echo/backend/lambda/util"
 )
+
+var tableName string
 
 // GetTodo gets a todo with the specified id; returns an error if this does not
 // exist
@@ -57,6 +60,8 @@ func HandleRequest(m types.Message) (types.Response, error) {
 		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
+
+	tableName = os.Getenv("TABLE_NAME")
 
 	idString := m.Data
 	if idString == "" {

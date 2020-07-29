@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -18,6 +19,8 @@ import (
 	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
 	"github.com/seanrmurphy/ws-echo/backend/lambda/util"
 )
+
+var tableName string
 
 // Post extracts the Item JSON and writes it to DynamoDB
 // Based on https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/dynamodb/create_item.go
@@ -73,6 +76,8 @@ func HandleRequest(m types.Message) (types.Response, error) {
 		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
+
+	tableName = os.Getenv("TABLE_NAME")
 
 	t := model.Todo{}
 	err := json.Unmarshal([]byte(m.Data), &t)

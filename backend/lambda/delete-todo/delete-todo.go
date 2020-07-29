@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
@@ -15,11 +16,11 @@ import (
 	"github.com/seanrmurphy/ws-echo/backend/lambda/util"
 )
 
+var tableName string
+
 // DeleteTodo deletes a todo specified with a uuid. In the case that this does
 // not exist an error is generated.
 func DeleteTodo(id uuid.UUID) (err error) {
-
-	tableName := "Todos"
 
 	// Create the dynamo client object
 	sess := session.Must(session.NewSession())
@@ -61,6 +62,8 @@ func HandleRequest(m types.Message) (types.Response, error) {
 		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
+
+	tableName = os.Getenv("TABLE_NAME")
 
 	idString := m.Data
 	if idString == "" {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -17,10 +18,10 @@ import (
 	"github.com/seanrmurphy/ws-echo/backend/lambda/util"
 )
 
+var tableName string
+
 // UpdateTodo updates a given todo in the dynamodb database
 func UpdateTodo(t model.Todo) (model.Todo, error) {
-	// Create item in table Movies
-	tableName := "Todos"
 
 	// Create the dynamo client object
 	sess := session.Must(session.NewSession())
@@ -66,6 +67,8 @@ func HandleRequest(m types.Message) (types.Response, error) {
 		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
+
+	tableName = os.Getenv("TABLE_NAME")
 
 	//id := req.PathParameters["todoid"]
 	//if id == "" {
