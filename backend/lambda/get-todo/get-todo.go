@@ -57,7 +57,7 @@ func GetTodo(id uuid.UUID) (t model.Todo, e error) {
 func HandleRequest(m types.Message) (types.Response, error) {
 
 	if m.Type != "get-todo" {
-		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
+		e := util.CreateResponse("get-todo-response", "NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
 
@@ -65,7 +65,7 @@ func HandleRequest(m types.Message) (types.Response, error) {
 
 	idString := m.Data
 	if idString == "" {
-		return util.CreateResponse("NOK", "No ID provided", ""), nil
+		return util.CreateResponse("get-todo-response", "NOK", "No ID provided", ""), nil
 	}
 
 	id, _ := uuid.Parse(idString)
@@ -73,7 +73,7 @@ func HandleRequest(m types.Message) (types.Response, error) {
 	// TODO(murp): add error checking here
 
 	tbody, _ := json.Marshal(t)
-	return util.CreateResponse("OK", "", string(tbody)), nil
+	return util.CreateResponse("get-todo-response", "OK", "", string(tbody)), nil
 }
 
 func main() {

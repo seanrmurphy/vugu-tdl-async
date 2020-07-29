@@ -8,5 +8,6 @@ type Message struct {
 type Response struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
+	Type    string `json:"messagetype"`
 	Data    string `json:"data"`
 }

@@ -74,7 +74,7 @@ func GetTodos() (tarray []model.Todo, e error) {
 func HandleRequest(m types.Message) (types.Response, error) {
 
 	if m.Type != "list-todos" {
-		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
+		e := util.CreateResponse("list-todos-response", "NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
 
@@ -84,7 +84,7 @@ func HandleRequest(m types.Message) (types.Response, error) {
 	tarray, _ := GetTodos()
 
 	tbody, _ := json.Marshal(tarray)
-	return util.CreateResponse("OK", "", string(tbody)), nil
+	return util.CreateResponse("list-todos-response", "OK", "", string(tbody)), nil
 }
 
 func main() {

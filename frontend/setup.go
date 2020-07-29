@@ -15,27 +15,10 @@ func setupAuthentication() {
 	AuthenticationData.RestEndpoint = "https://2wwyvmz2zd.execute-api.eu-west-2.amazonaws.com/prod"
 	AuthenticationData.RedirectURI = "http://localhost:8844"
 
-	//cv := sessionStorageGet("codeVerifier")
-
-	//if cv.Type() == js.TypeNull {
-	//v, _ := pkce.CreateCodeVerifier()
-	//AuthenticationData.LoginData.CodeVerifier = v
-
-	//log.Printf("Creating new code verifier for login = %v", AuthenticationData.LoginData.CodeVerifier.String())
-
-	//sessionStorageSet("codeVerifier", AuthenticationData.LoginData.CodeVerifier.String())
-
-	//} else {
-	//AuthenticationData.LoginData.CodeVerifier = &pkce.CodeVerifier{
-	//Value: cv.String(),
-	//}
-	//}
 }
 
 // OVERALL APPLICATION WIRING IN vuguSetup
 func vuguSetup(buildEnv *vugu.BuildEnv, eventEnv vugu.EventEnv) vugu.Builder {
-
-	//setupAuthentication()
 
 	// CREATE A NEW ROUTER INSTANCE
 	router := vgrouter.New(eventEnv)

@@ -4,12 +4,14 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
 
 	"flag"
 
+	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
 	"github.com/vugu/vugu"
 	"github.com/vugu/vugu/domrender"
 	"nhooyr.io/websocket"
@@ -65,6 +67,21 @@ func initWSConnection() {
 	}
 	log.Printf("Opened websocket connection...\n")
 
+	// request Todos
+	m := types.Message{
+		Type: "list-todos",
+		Data: "",
+	}
+
+	messageMarshalled, _ := json.Marshal(&m)
+
+	//err = wsjson.Write(ctx, c.conn, v)
+	//str := "{\"action\": \"echo\", \"type\": \"t\", \"content\": \"c\"}"
+	err = wsConn.Write(ctx, websocket.MessageText, []byte(messageMarshalled))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	go receiver()
 }
 
@@ -72,11 +89,13 @@ func initWSConnection() {
 func receiver() {
 	for {
 		ctx := context.TODO()
-		_, msg, err := wsConn.Read(ctx)
+		_, msgMarshalled, err := wsConn.Read(ctx)
 		if err != nil {
 			log.Printf("Error reading message %v\n", err)
 		} else {
-			log.Printf("Message successfully received %v\n", string(msg))
+			msg := types.Response{}
+			_ = json.Unmarshal(msgMarshalled, &msg)
+			log.Printf("Message successfully received - type = %v, data = %v\n", msg.Type, msg.Data)
 		}
 	}
 }

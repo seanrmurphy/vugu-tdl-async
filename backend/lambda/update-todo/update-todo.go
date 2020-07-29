@@ -64,7 +64,7 @@ func UpdateTodo(t model.Todo) (model.Todo, error) {
 func HandleRequest(m types.Message) (types.Response, error) {
 
 	if m.Type != "update-todo" {
-		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
+		e := util.CreateResponse("update-todo-response", "NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
 
@@ -87,12 +87,12 @@ func HandleRequest(m types.Message) (types.Response, error) {
 	returnedTodo := model.Todo{}
 	returnedTodo, err = UpdateTodo(t)
 	if err != nil {
-		e := util.CreateResponse("NOK", "Error updating todo in DB...", "")
+		e := util.CreateResponse("update-todo-response", "NOK", "Error updating todo in DB...", "")
 		return e, nil
 	}
 
 	tbody, _ := json.Marshal(returnedTodo)
-	return util.CreateResponse("OK", "", string(tbody)), nil
+	return util.CreateResponse("update-todo-response", "OK", "", string(tbody)), nil
 }
 
 func main() {

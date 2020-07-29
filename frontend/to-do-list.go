@@ -16,16 +16,6 @@ import (
 	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
 )
 
-//func createClient() *client.SimpleTodoAPISecure {
-//url, _ := url.Parse(AuthenticationData.RestEndpoint)
-////authenticator := BearerToken(AuthenticationData.LoginData.ResponseParams.AccessToken)
-
-//conf := client.Config{
-//URL:      url,
-//AuthInfo: authenticator,
-//}
-//return client.New(conf)
-//}
 
 func (c *ToDoList) updateItem(t *models.Todo) {
 	//backend := createClient()

@@ -73,7 +73,7 @@ func validateTodo(t model.Todo) (v model.Todo, e error) {
 func HandleRequest(m types.Message) (types.Response, error) {
 
 	if m.Type != "create-todo" {
-		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
+		e := util.CreateResponse("create-todo-response", "NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
 
@@ -83,21 +83,21 @@ func HandleRequest(m types.Message) (types.Response, error) {
 	err := json.Unmarshal([]byte(m.Data), &t)
 	if err != nil {
 		log.Printf("Invalid input - error unmarshalling input%v\n", err.Error())
-		e := util.CreateResponse("NOK", "Invalid Todo", "")
+		e := util.CreateResponse("create-todo-response", "NOK", "Invalid Todo", "")
 		return e, nil
 	}
 
 	validTodo, err := validateTodo(t)
 	if err != nil {
 		log.Printf("Invalid input - should return error %v\n", err.Error())
-		e := util.CreateResponse("NOK", "Invalid Todo", "")
+		e := util.CreateResponse("create-todo-response", "NOK", "Invalid Todo", "")
 		return e, nil
 	}
 
 	posted, err := Post(validTodo)
 
 	b, _ := json.Marshal(&posted)
-	e := util.CreateResponse("OK", "", string(b))
+	e := util.CreateResponse("create-todo-response", "OK", "", string(b))
 	return e, nil
 }
 

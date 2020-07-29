@@ -59,7 +59,7 @@ func DeleteTodo(id uuid.UUID) (err error) {
 func HandleRequest(m types.Message) (types.Response, error) {
 
 	if m.Type != "delete-todo" {
-		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
+		e := util.CreateResponse("delete-todo-response", "NOK", "Handling incorrect message type - ignoring...", "")
 		return e, nil
 	}
 
@@ -67,7 +67,7 @@ func HandleRequest(m types.Message) (types.Response, error) {
 
 	idString := m.Data
 	if idString == "" {
-		e := util.CreateResponse("NOK", "No valid ID provided", "")
+		e := util.CreateResponse("delete-todo-response", "NOK", "No valid ID provided", "")
 		return e, nil
 	}
 
@@ -75,12 +75,12 @@ func HandleRequest(m types.Message) (types.Response, error) {
 	err := DeleteTodo(id)
 
 	if err != nil {
-		e := util.CreateResponse("NOK", "No object with given ID found", "")
+		e := util.CreateResponse("delete-todo-response", "NOK", "No object with given ID found", "")
 		return e, nil
 	}
 
 	//return fmt.Sprintf("Hello %s!", name.Name), nil
-	e := util.CreateResponse("OK", "Record deleted", "")
+	e := util.CreateResponse("delete-todo-response", "OK", "Record deleted", "")
 	return e, nil
 }
 
