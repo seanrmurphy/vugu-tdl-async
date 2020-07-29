@@ -40,7 +40,7 @@ func Post(t model.Todo) (model.Todo, error) {
 	// Create Item in table and return
 	input := &dynamodb.PutItemInput{
 		Item:      av,
-		TableName: aws.String("Todos"),
+		TableName: aws.String(tableName),
 	}
 	_, err = svc.PutItem(input)
 	if err != nil {

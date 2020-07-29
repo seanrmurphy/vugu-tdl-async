@@ -16,16 +16,10 @@
                         </div>
                 </div>
 
-                <div class="container">
-                        <div class="columns">
-                                <div class="column has-text-centered">
-                                        <div class="to-do-list-new-todo">
-                                                <label>Enter text to send via websockets:</label>
-                                                <input type="text" id="new-todo" @keypress='c.Keypress(event)'>
-                                        </div>
-                                </div>
-                        </div>
+                <div>
+                        <vg-comp expr="c.Body"/>
                 </div>
+
         </div>
 
     </main>
