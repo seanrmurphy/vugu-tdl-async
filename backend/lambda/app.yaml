@@ -9,8 +9,16 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: 'simplechat_connections'
+    Default: 'simpletodo_connections'
     Description: (Required) The name of the new DynamoDB to store connection identifiers for each connected clients. Minimum 3 characters
+    MinLength: 3
+    MaxLength: 50
+    AllowedPattern: ^[A-Za-z_]+$
+    ConstraintDescription: 'Required. Can be characters and underscore only. No numbers or special characters allowed.'
+  TodosTableName:
+    Type: String
+    Default: 'simpletodo_todos'
+    Description: (Required) The name of the new DynamoDB to store todos for the simpletodo application.
     MinLength: 3
     MaxLength: 50
     AllowedPattern: ^[A-Za-z_]+$
@@ -148,6 +156,21 @@ Resources:
       SSESpecification:
         SSEEnabled: True
       TableName: !Ref TableName
+  TodosTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: "ID"
+        AttributeType: "B"
+      KeySchema:
+      - AttributeName: "ID"
+        KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      TableName: !Ref TodosTableName
   OnConnectFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -253,10 +276,10 @@ Resources:
       Runtime: go1.x
       Environment:
         Variables:
-          TABLE_NAME: !Ref TableName
+          TABLE_NAME: !Ref TodosTableName
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref TableName
+          TableName: !Ref TodosTableName
   CreateTodoPermission:
     Type: AWS::Lambda::Permission
     DependsOn:
@@ -274,10 +297,10 @@ Resources:
       Runtime: go1.x
       Environment:
         Variables:
-          TABLE_NAME: !Ref TableName
+          TABLE_NAME: !Ref TodosTableName
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref TableName
+          TableName: !Ref TodosTableName
   ListTodosPermission:
     Type: AWS::Lambda::Permission
     DependsOn:
@@ -295,10 +318,10 @@ Resources:
       Runtime: go1.x
       Environment:
         Variables:
-          TABLE_NAME: !Ref TableName
+          TABLE_NAME: !Ref TodosTableName
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref TableName
+          TableName: !Ref TodosTableName
   DeleteTodoPermission:
     Type: AWS::Lambda::Permission
     DependsOn:
@@ -316,10 +339,10 @@ Resources:
       Runtime: go1.x
       Environment:
         Variables:
-          TABLE_NAME: !Ref TableName
+          TABLE_NAME: !Ref TodosTableName
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref TableName
+          TableName: !Ref TodosTableName
   GetTodoPermission:
     Type: AWS::Lambda::Permission
     DependsOn:
@@ -337,10 +360,10 @@ Resources:
       Runtime: go1.x
       Environment:
         Variables:
-          TABLE_NAME: !Ref TableName
+          TABLE_NAME: !Ref TodosTableName
       Policies:
       - DynamoDBCrudPolicy:
-          TableName: !Ref TableName
+          TableName: !Ref TodosTableName
   UpdateTodoPermission:
     Type: AWS::Lambda::Permission
     DependsOn:
