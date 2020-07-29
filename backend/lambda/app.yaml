@@ -244,6 +244,111 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref EchoFunction
       Principal: apigateway.amazonaws.com
+  CreateTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: create-todo/create-todo.zip
+      Handler: create-todo
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TableName
+  CreateTodoPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref CreateTodoFunction
+      Principal: apigateway.amazonaws.com
+  ListTodosFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: list-todos/list-todos.zip
+      Handler: list-todos
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TableName
+  ListTodosPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ListTodosFunction
+      Principal: apigateway.amazonaws.com
+  DeleteTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: delete-todo/delete-todo.zip
+      Handler: delete-todo
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TableName
+  DeleteTodoPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DeleteTodoFunction
+      Principal: apigateway.amazonaws.com
+  GetTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get-todo/get-todo.zip
+      Handler: get-todo
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TableName
+  GetTodoPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetTodoFunction
+      Principal: apigateway.amazonaws.com
+  UpdateTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: update-todo/update-todo.zip
+      Handler: update-todo
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TableName
+  UpdateTodoPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref UpdateTodoFunction
+      Principal: apigateway.amazonaws.com
 
 Outputs:
   ConnectionsTableArn:
@@ -261,6 +366,26 @@ Outputs:
   DefaultMessageFunctionArn:
     Description: "DefaultMessage function ARN"
     Value: !GetAtt DefaultMessageFunction.Arn
+
+  CreateTodoMessageFunctionArn:
+    Description: "CreateTodo function ARN"
+    Value: !GetAtt CreateTodoFunction.Arn
+
+  GetTodoMessageFunctionArn:
+    Description: "GetTodo function ARN"
+    Value: !GetAtt GetTodoFunction.Arn
+
+  DeleteTodoMessageFunctionArn:
+    Description: "DeleteTodo function ARN"
+    Value: !GetAtt DeleteTodoFunction.Arn
+
+  UpdateTodoMessageFunctionArn:
+    Description: "UpdateTodo function ARN"
+    Value: !GetAtt UpdateTodoFunction.Arn
+
+  ListTodosMessageFunctionArn:
+    Description: "ListTodos function ARN"
+    Value: !GetAtt ListTodosFunction.Arn
 
   WebSocketURI:
     Description: "The WSS Protocol URI to connect to"
