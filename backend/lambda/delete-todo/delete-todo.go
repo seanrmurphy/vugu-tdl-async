@@ -3,9 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"net/http"
 
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -13,7 +11,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/seanrmurphy/go-fullstack/backend/util"
+	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
+	"github.com/seanrmurphy/ws-echo/backend/lambda/util"
 )
 
 // DeleteTodo deletes a todo specified with a uuid. In the case that this does
@@ -56,11 +55,16 @@ func DeleteTodo(id uuid.UUID) (err error) {
 
 // HandleRequest performs some basic validation on the input id, if valid sends
 // to the delete function and generates a return JSON string which is human readabled
-func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func HandleRequest(m types.Message) (types.Response, error) {
 
-	idString := req.PathParameters["todoid"]
+	if m.Type != "delete-todo" {
+		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
+		return e, nil
+	}
+
+	idString := m.Data
 	if idString == "" {
-		e := util.CreateResponse(http.StatusInternalServerError, "No valid ID provided")
+		e := util.CreateResponse("NOK", "No valid ID provided", "")
 		return e, nil
 	}
 
@@ -68,12 +72,12 @@ func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyRes
 	err := DeleteTodo(id)
 
 	if err != nil {
-		e := util.CreateResponse(http.StatusNotFound, "No object with given ID found")
+		e := util.CreateResponse("NOK", "No object with given ID found", "")
 		return e, nil
 	}
 
 	//return fmt.Sprintf("Hello %s!", name.Name), nil
-	e := util.CreateResponse(http.StatusOK, "Record deleted")
+	e := util.CreateResponse("OK", "Record deleted", "")
 	return e, nil
 }
 

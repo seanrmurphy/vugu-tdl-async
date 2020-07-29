@@ -4,19 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/google/uuid"
 
-	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 
 	"github.com/seanrmurphy/go-fullstack/backend/model"
-	"github.com/seanrmurphy/go-fullstack/backend/util"
+	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
+	"github.com/seanrmurphy/ws-echo/backend/lambda/util"
 )
 
 // UpdateTodo updates a given todo in the dynamodb database
@@ -62,30 +60,36 @@ func UpdateTodo(t model.Todo) (model.Todo, error) {
 
 // HandleRequest performs a simple check to ensure that the id provided is valid
 // and calls the update function; it returns the updated record jsonified
-func HandleRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func HandleRequest(m types.Message) (types.Response, error) {
 
-	id := req.PathParameters["todoid"]
-	if id == "" {
-		return events.APIGatewayProxyResponse{
-			StatusCode: http.StatusInternalServerError,
-			Body:       "No ID provided",
-		}, nil
+	if m.Type != "update-todo" {
+		e := util.CreateResponse("NOK", "Handling incorrect message type - ignoring...", "")
+		return e, nil
 	}
 
+	//id := req.PathParameters["todoid"]
+	//if id == "" {
+	//return events.APIGatewayProxyResponse{
+	//StatusCode: http.StatusInternalServerError,
+	//Body:       "No ID provided",
+	//}, nil
+	//}
+
 	t := model.Todo{}
-	_ = json.Unmarshal([]byte(req.Body), &t)
+	_ = json.Unmarshal([]byte(m.Data), &t)
 	var err error
-	t.ID, err = uuid.Parse(id)
+	//t.ID, err = uuid.Parse(id)
 	log.Printf("Received Todo: %s\n", t)
 
 	returnedTodo := model.Todo{}
 	returnedTodo, err = UpdateTodo(t)
 	if err != nil {
-		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: http.StatusInternalServerError}, nil
+		e := util.CreateResponse("NOK", "Error updating todo in DB...", "")
+		return e, nil
 	}
 
 	tbody, _ := json.Marshal(returnedTodo)
-	return util.CreateResponseWithCors(http.StatusOK, string(tbody)), nil
+	return util.CreateResponse("OK", "", string(tbody)), nil
 }
 
 func main() {
