@@ -9,3 +9,13 @@ backend/lambda/ondisconnect/ondisconnect.zip
 backend/lambda/default/default
 frontend/0_components_vgen.go
 frontend/bin/devserver
+backend/lambda/create-todo/create-todo
+backend/lambda/create-todo/create-todo.zip
+backend/lambda/delete-todo/delete-todo
+backend/lambda/delete-todo/delete-todo.zip
+backend/lambda/get-todo/get-todo
+backend/lambda/get-todo/get-todo.zip
+backend/lambda/list-todos/list-todos
+backend/lambda/list-todos/list-todos.zip
+backend/lambda/update-todo/update-todo
+backend/lambda/update-todo/update-todo.zip
