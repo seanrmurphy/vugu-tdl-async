@@ -1,5 +1,5 @@
 GOBUILD=go build
-FUNCTION=onconnect
+FUNCTION=delete-todo
 
 build:
 	GOOS=linux GOARCH=amd64 ${GOBUILD} -o ${CURDIR}/${FUNCTION} ${FUNCTION}.go

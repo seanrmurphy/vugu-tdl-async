@@ -1,7 +1,9 @@
 GOBUILD=go build
-BINPATH=${PWD}
+FUNCTION=default
 
 build:
-	GOOS=linux GOARCH=amd64 ${GOBUILD} -o ${BINPATH}/default default.go
-	chmod +x ${BINPATH}/default
-	zip -j ${BINPATH}/default.zip ${BINPATH}/default
+	GOOS=linux GOARCH=amd64 ${GOBUILD} -o ${CURDIR}/${FUNCTION} ${FUNCTION}.go
+	chmod +x ${CURDIR}/${FUNCTION}
+	zip -j ${CURDIR}/${FUNCTION}.zip ${CURDIR}/${FUNCTION}
+
+.PHONY: build

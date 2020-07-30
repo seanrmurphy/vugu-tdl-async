@@ -16,16 +16,10 @@
                         </div>
                 </div>
 
-                <div class="container">
-                        <div class="columns">
-                                <div class="column has-text-centered">
-                                        <div class="to-do-list-new-todo">
-                                                <label>Enter text to send via websockets:</label>
-                                                <input type="text" id="new-todo" @keypress='c.Keypress(event)'>
-                                        </div>
-                                </div>
-                        </div>
+                <div>
+                        <vg-comp expr="c.Body"/>
                 </div>
+
         </div>
 
     </main>
@@ -36,10 +30,19 @@
 
 <script type="application/x-go">
 
-import "nhooyr.io/websocket"
+import (
+	"github.com/vugu/vgrouter"
+	"github.com/vugu/vugu"
+)
 
 type Root struct {
-        conn *websocket.Conn
+	// ANYTHING THAT MUST NAVIGATE NEED ONLY EMBED THIS
+	vgrouter.NavigatorRef
+
+	// THE BODY COMPONENT, GETS SET BY THE APPROPRIATE ROUTE ABOVE
+	Body vugu.Builder
+
+	events vugu.EventEnv
 }
 
 </script>

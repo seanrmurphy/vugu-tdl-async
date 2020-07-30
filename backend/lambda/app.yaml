@@ -9,8 +9,16 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: 'simplechat_connections'
+    Default: 'simpletodo_connections'
     Description: (Required) The name of the new DynamoDB to store connection identifiers for each connected clients. Minimum 3 characters
+    MinLength: 3
+    MaxLength: 50
+    AllowedPattern: ^[A-Za-z_]+$
+    ConstraintDescription: 'Required. Can be characters and underscore only. No numbers or special characters allowed.'
+  TodosTableName:
+    Type: String
+    Default: 'simpletodo_todos'
+    Description: (Required) The name of the new DynamoDB to store todos for the simpletodo application.
     MinLength: 3
     MaxLength: 50
     AllowedPattern: ^[A-Za-z_]+$
@@ -22,7 +30,7 @@ Resources:
     Properties:
       Name: SimpleChatWebSocket
       ProtocolType: WEBSOCKET
-      RouteSelectionExpression: "$request.body.action"
+      RouteSelectionExpression: "$request.body.messagetype"
   ConnectRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -88,7 +96,6 @@ Resources:
     Properties:
       ApiId: !Ref SimpleChatWebSocket
       RouteKey: echo
-      #RouteResponseSelectionExpression: "$default"
       AuthorizationType: NONE
       OperationName: EchoRoute
       Target: !Join
@@ -116,6 +123,166 @@ Resources:
       ApiId: !Ref SimpleChatWebSocket
       IntegrationResponseKey: "$default"
       IntegrationId: !Ref EchoInteg
+  CreateTodoRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: create-todo
+      AuthorizationType: NONE
+      OperationName: CreateTodoRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref CreateTodoInteg
+  CreateTodoRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref CreateTodoRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  CreateTodoInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Create Todo Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CreateTodoFunction.Arn}/invocations
+  CreateTodoIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref CreateTodoInteg
+  DeleteTodoRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: delete-todo
+      AuthorizationType: NONE
+      OperationName: DeleteTodoRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DeleteTodoInteg
+  DeleteTodoRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref DeleteTodoRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  DeleteTodoInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Delete Todo Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteTodoFunction.Arn}/invocations
+  DeleteTodoIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref DeleteTodoInteg
+  UpdateTodoRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: update-todo
+      AuthorizationType: NONE
+      OperationName: UpdateTodoRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref UpdateTodoInteg
+  UpdateTodoRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref UpdateTodoRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  UpdateTodoInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Update Todo Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateTodoFunction.Arn}/invocations
+  UpdateTodoIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref UpdateTodoInteg
+  GetTodoRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: get-todo
+      AuthorizationType: NONE
+      OperationName: GetTodoRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref GetTodoInteg
+  GetTodoRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref GetTodoRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  GetTodoInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: Get Todo Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetTodoFunction.Arn}/invocations
+  GetTodoIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref GetTodoInteg
+  ListTodosRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      RouteKey: list-todos
+      AuthorizationType: NONE
+      OperationName: ListTodosRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ListTodosInteg
+  ListTodosRouteResponse:
+    Type: 'AWS::ApiGatewayV2::RouteResponse'
+    Properties:
+      RouteId: !Ref ListTodosRoute
+      ApiId: !Ref SimpleChatWebSocket
+      RouteResponseKey: $default
+  ListTodosInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      Description: List Todos Integration
+      IntegrationType: AWS
+      IntegrationUri:
+        Fn::Sub:
+            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListTodosFunction.Arn}/invocations
+  ListTodosIntegResponse:
+    Type: AWS::ApiGatewayV2::IntegrationResponse
+    Properties:
+      ApiId: !Ref SimpleChatWebSocket
+      IntegrationResponseKey: "$default"
+      IntegrationId: !Ref ListTodosInteg
 
   Deployment:
     Type: AWS::ApiGatewayV2::Deployment
@@ -124,6 +291,11 @@ Resources:
     - DefaultRoute
     - DisconnectRoute
     - EchoRoute
+    - CreateTodoRoute
+    - DeleteTodoRoute
+    - GetTodoRoute
+    - UpdateTodoRoute
+    - ListTodosRoute
     Properties:
       ApiId: !Ref SimpleChatWebSocket
   Stage:
@@ -148,6 +320,21 @@ Resources:
       SSESpecification:
         SSEEnabled: True
       TableName: !Ref TableName
+  TodosTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: "ID"
+        AttributeType: "B"
+      KeySchema:
+      - AttributeName: "ID"
+        KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      TableName: !Ref TodosTableName
   OnConnectFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -244,6 +431,111 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref EchoFunction
       Principal: apigateway.amazonaws.com
+  CreateTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: create-todo/create-todo.zip
+      Handler: create-todo
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TodosTableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TodosTableName
+  CreateTodoPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref CreateTodoFunction
+      Principal: apigateway.amazonaws.com
+  ListTodosFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: list-todos/list-todos.zip
+      Handler: list-todos
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TodosTableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TodosTableName
+  ListTodosPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ListTodosFunction
+      Principal: apigateway.amazonaws.com
+  DeleteTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: delete-todo/delete-todo.zip
+      Handler: delete-todo
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TodosTableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TodosTableName
+  DeleteTodoPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref DeleteTodoFunction
+      Principal: apigateway.amazonaws.com
+  GetTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: get-todo/get-todo.zip
+      Handler: get-todo
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TodosTableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TodosTableName
+  GetTodoPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetTodoFunction
+      Principal: apigateway.amazonaws.com
+  UpdateTodoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: update-todo/update-todo.zip
+      Handler: update-todo
+      MemorySize: 256
+      Runtime: go1.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TodosTableName
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref TodosTableName
+  UpdateTodoPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - SimpleChatWebSocket
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref UpdateTodoFunction
+      Principal: apigateway.amazonaws.com
 
 Outputs:
   ConnectionsTableArn:
@@ -261,6 +553,26 @@ Outputs:
   DefaultMessageFunctionArn:
     Description: "DefaultMessage function ARN"
     Value: !GetAtt DefaultMessageFunction.Arn
+
+  CreateTodoMessageFunctionArn:
+    Description: "CreateTodo function ARN"
+    Value: !GetAtt CreateTodoFunction.Arn
+
+  GetTodoMessageFunctionArn:
+    Description: "GetTodo function ARN"
+    Value: !GetAtt GetTodoFunction.Arn
+
+  DeleteTodoMessageFunctionArn:
+    Description: "DeleteTodo function ARN"
+    Value: !GetAtt DeleteTodoFunction.Arn
+
+  UpdateTodoMessageFunctionArn:
+    Description: "UpdateTodo function ARN"
+    Value: !GetAtt UpdateTodoFunction.Arn
+
+  ListTodosMessageFunctionArn:
+    Description: "ListTodos function ARN"
+    Value: !GetAtt ListTodosFunction.Arn
 
   WebSocketURI:
     Description: "The WSS Protocol URI to connect to"
