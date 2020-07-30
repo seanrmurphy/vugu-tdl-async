@@ -41,6 +41,8 @@ type Root struct {
 
 	// THE BODY COMPONENT, GETS SET BY THE APPROPRIATE ROUTE ABOVE
 	Body vugu.Builder
+
+	events vugu.EventEnv
 }
 
 </script>

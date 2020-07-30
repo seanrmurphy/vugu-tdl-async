@@ -11,13 +11,18 @@ import (
 
 	"flag"
 
+	"github.com/seanrmurphy/vugu-tdl-swagger/swagger/models"
+
 	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
 	"github.com/vugu/vugu"
 	"github.com/vugu/vugu/domrender"
 	"nhooyr.io/websocket"
 )
 
-var wsConn *websocket.Conn
+var (
+	wsConn      *websocket.Conn
+	rootBuilder *Root
+)
 
 func main() {
 
@@ -38,7 +43,7 @@ func main() {
 	}
 	defer renderer.Release()
 
-	rootBuilder := vuguSetup(buildEnv, renderer.EventEnv())
+	rootBuilder = vuguSetup(buildEnv, renderer.EventEnv()).(*Root)
 	//rootBuilder := &Root{}
 
 	initWSConnection()
@@ -96,6 +101,12 @@ func receiver() {
 			msg := types.Response{}
 			_ = json.Unmarshal(msgMarshalled, &msg)
 			log.Printf("Message successfully received - type = %v, data = %v\n", msg.Type, msg.Data)
+			if msg.Type == "list-todos-response" {
+				todos := []models.Todo{}
+				_ = json.Unmarshal([]byte(msg.Data), &todos)
+				//log.Printf("Todos = %v\n", todos)
+				go rootBuilder.initializeTodos(todos)
+			}
 		}
 	}
 }

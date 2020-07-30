@@ -16,7 +16,6 @@ import (
 	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
 )
 
-
 func (c *ToDoList) updateItem(t *models.Todo) {
 	//backend := createClient()
 
@@ -82,6 +81,17 @@ func (c *ToDoList) getTodosFromBackend() ([]*models.Todo, error) {
 
 	//return todos.Payload, nil
 	return nil, nil
+}
+
+func (c *ToDoList) InitializeTodos(todos []models.Todo) {
+	log.Printf("Initializing todo data...")
+	c.Todos = make(map[string]models.Todo)
+	c.Index = []string{}
+	for _, v := range todos {
+		idString := v.ID.String()
+		c.Todos[idString] = v
+		c.Index = append(c.Index, idString)
+	}
 }
 
 func (c *ToDoList) BeforeBuild() {
