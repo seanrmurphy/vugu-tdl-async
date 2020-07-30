@@ -53,17 +53,21 @@ func (c *ToDoList) postItemToBackend(t models.Todo) {
 }
 
 func (c *ToDoList) destroyItemOnBackend(t *models.Todo) {
-	//backend := createClient()
 
-	//params := developers.NewDeleteTodoParams()
-	//params.Todoid = t.ID.String()
+	m := types.Message{
+		Type: "delete-todo",
+		Data: t.ID.String(),
+	}
 
-	//ctx := context.TODO()
+	messageMarshalled, _ := json.Marshal(&m)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
 
-	//if _, err := backend.Developers.DeleteTodo(ctx, params); err != nil {
-	//log.Printf("Error deleting item on backend - error %v\n", err)
-	//return
-	//}
+	err := wsConn.Write(ctx, websocket.MessageText, []byte(messageMarshalled))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func (c *ToDoList) getTodosFromBackend() ([]*models.Todo, error) {
