@@ -17,17 +17,25 @@ import (
 )
 
 func (c *ToDoList) updateItem(t *models.Todo) {
-	//backend := createClient()
 
-	//params := developers.NewUpdateTodoParams()
-	//params.Todo = t
-	//params.Todoid = t.ID.String()
-	//ctx := context.TODO()
+	todoMarshalled, _ := json.Marshal(&t)
 
-	//if _, err := backend.Developers.UpdateTodo(ctx, params); err != nil {
-	//log.Printf("Error updating item on backend - error %v\n", err)
-	//return
-	//}
+	m := types.Message{
+		Type: "update-todo",
+		Data: string(todoMarshalled[:]),
+	}
+
+	messageMarshalled, _ := json.Marshal(&m)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	//err = wsjson.Write(ctx, c.conn, v)
+	//str := "{\"action\": \"echo\", \"type\": \"t\", \"content\": \"c\"}"
+	err := wsConn.Write(ctx, websocket.MessageText, []byte(messageMarshalled))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func (c *ToDoList) postItemToBackend(t models.Todo) {
@@ -70,23 +78,6 @@ func (c *ToDoList) destroyItemOnBackend(t *models.Todo) {
 
 }
 
-func (c *ToDoList) getTodosFromBackend() ([]*models.Todo, error) {
-
-	//backend := createClient()
-
-	//p := developers.NewGetAllTodosParams()
-	//ctx := context.TODO()
-	//todos, err := backend.Developers.GetAllTodos(ctx, p)
-
-	//if err != nil {
-	//log.Printf("Error obtaining items from backend - error %v\n", err)
-	//return nil, err
-	//}
-
-	//return todos.Payload, nil
-	return nil, nil
-}
-
 func (c *ToDoList) InitializeTodos(todos []models.Todo) {
 	log.Printf("Initializing todo data...")
 	c.Todos = make(map[string]models.Todo)
@@ -99,26 +90,6 @@ func (c *ToDoList) InitializeTodos(todos []models.Todo) {
 }
 
 func (c *ToDoList) BeforeBuild() {
-	// get the latest data from the backend...could be expensive to keep calling this
-	//if AuthenticationData.LoginData.LoggedIn {
-	//// this does not handle the case well in which the length of the todolist
-	//// on the server is 0
-	//if len(c.Todos) == 0 {
-	//log.Printf("Retrieving todos from backend...")
-	//todos, err := c.getTodosFromBackend()
-
-	//if err == nil {
-	//log.Printf("Initializing todo data...")
-	//c.Todos = make(map[string]models.Todo)
-	//c.Index = []string{}
-	//for _, v := range todos {
-	//idString := v.ID.String()
-	//c.Todos[idString] = *v
-	//c.Index = append(c.Index, idString)
-	//}
-	//}
-	//}
-	//}
 }
 
 func (c *ToDoList) getTodoId(s interface{}) (o, id string) {
