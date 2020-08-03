@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
+	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
 )
 
 type GenericReturnMessage struct {

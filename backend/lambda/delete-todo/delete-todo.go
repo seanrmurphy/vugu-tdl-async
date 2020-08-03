@@ -12,8 +12,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/seanrmurphy/ws-echo/backend/lambda/types"
-	"github.com/seanrmurphy/ws-echo/backend/lambda/util"
+	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
+	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/util"
 )
 
 var tableName string

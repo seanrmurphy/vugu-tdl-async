@@ -1,3 +1,3 @@
-module github.com/seanrmurphy/ws-echo/backend/lambda/util
+module github.com/seanrmurphy/vugu-tdl-async/backend/lambda/util
 
 go 1.14
