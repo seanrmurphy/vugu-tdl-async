@@ -11,20 +11,20 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/google/uuid"
 
-	"github.com/seanrmurphy/go-fullstack/backend/model"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/util"
+	"github.com/seanrmurphy/vugu-tdl-async/models"
 )
 
 var tableName string
 
 // Post extracts the Item JSON and writes it to DynamoDB
 // Based on https://github.com/awsdocs/aws-doc-sdk-examples/blob/master/go/example_code/dynamodb/create_item.go
-func Post(t model.Todo) (model.Todo, error) {
+func Post(t models.Todo) (models.Todo, error) {
 	// Create the dynamo client object
 	sess := session.Must(session.NewSession())
 	svc := dynamodb.New(sess)
@@ -51,14 +51,14 @@ func Post(t model.Todo) (model.Todo, error) {
 
 // validateTodo performs a couple of basic checks on the todo to ensure it
 // contains sensible content before posting it to the database
-func validateTodo(t model.Todo) (v model.Todo, e error) {
+func validateTodo(t models.Todo) (v models.Todo, e error) {
 	v = t
-	if t.Title == "" {
+	if *t.Title == "" {
 		e = errors.New("Invalid Todo Description")
 		return
 	}
 	// limit the status to a specific set...
-	nullUuid := uuid.UUID{}
+	nullUuid := strfmt.UUID("")
 	if t.ID == nullUuid {
 		e = errors.New("Invalid UUID")
 		return
@@ -79,7 +79,7 @@ func HandleRequest(m types.Message) (types.Response, error) {
 
 	tableName = os.Getenv("TABLE_NAME")
 
-	t := model.Todo{}
+	t := models.Todo{}
 	err := json.Unmarshal([]byte(m.Data), &t)
 	if err != nil {
 		log.Printf("Invalid input - error unmarshalling input%v\n", err.Error())

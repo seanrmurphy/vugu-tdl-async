@@ -12,16 +12,16 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/google/uuid"
 
-	"github.com/seanrmurphy/go-fullstack/backend/model"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/util"
+	"github.com/seanrmurphy/vugu-tdl-async/models"
 )
 
 var tableName string
 
 // GetTodo gets a todo with the specified id; returns an error if this does not
 // exist
-func GetTodo(id uuid.UUID) (t model.Todo, e error) {
+func GetTodo(id uuid.UUID) (t models.Todo, e error) {
 
 	tableName := "Todos"
 

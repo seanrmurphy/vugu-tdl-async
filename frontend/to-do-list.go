@@ -13,7 +13,7 @@ import (
 	"nhooyr.io/websocket"
 
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
-	"github.com/seanrmurphy/vugu-tdl-swagger/swagger/models"
+	"github.com/seanrmurphy/vugu-tdl-async/models"
 )
 
 func (c *ToDoList) updateItem(t *models.Todo) {

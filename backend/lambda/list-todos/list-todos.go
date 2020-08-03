@@ -12,15 +12,15 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 
-	"github.com/seanrmurphy/go-fullstack/backend/model"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/util"
+	"github.com/seanrmurphy/vugu-tdl-async/models"
 )
 
 var tableName string
 
 // GetTodos gets an array of todos and returns them
-func GetTodos() (tarray []model.Todo, e error) {
+func GetTodos() (tarray []models.Todo, e error) {
 
 	// Create the dynamo client object
 	sess := session.Must(session.NewSession())
@@ -54,7 +54,7 @@ func GetTodos() (tarray []model.Todo, e error) {
 	}
 
 	for _, i := range result.Items {
-		t := model.Todo{}
+		t := models.Todo{}
 
 		err = dynamodbattribute.UnmarshalMap(i, &t)
 
