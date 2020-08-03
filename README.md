@@ -20,6 +20,6 @@ and serve it locally.
 # Related Medium post
 
 A medium post describes this work here:
-* INSERT LINK
+* https://medium.com/@sean_24982/fullstack-go-going-asynchronous-1ab00eb7c517
 
 
