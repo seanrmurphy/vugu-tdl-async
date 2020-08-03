@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
@@ -11,7 +12,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/google/uuid"
 
+	strfmt "github.com/go-openapi/strfmt"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/util"
 	"github.com/seanrmurphy/vugu-tdl-async/models"
@@ -54,15 +57,27 @@ func GetTodos() (tarray []models.Todo, e error) {
 	}
 
 	for _, i := range result.Items {
-		t := models.Todo{}
+		type simplifiedTodo struct {
+			ID           uuid.UUID
+			Title        string
+			Completed    bool
+			CreationDate time.Time
+		}
 
-		err = dynamodbattribute.UnmarshalMap(i, &t)
+		st := simplifiedTodo{}
+		err = dynamodbattribute.UnmarshalMap(i, &st)
 
 		if err != nil {
 			log.Println("Got error unmarshalling:", err.Error())
 			e = err
 			return
 		} else {
+			t := models.Todo{
+				Completed:    st.Completed,
+				CreationDate: strfmt.DateTime(st.CreationDate),
+				ID:           strfmt.UUID(st.ID.String()),
+				Title:        &st.Title,
+			}
 			tarray = append(tarray, t)
 		}
 	}

@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/google/uuid"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -29,8 +32,24 @@ func Post(t models.Todo) (models.Todo, error) {
 	sess := session.Must(session.NewSession())
 	svc := dynamodb.New(sess)
 
+	type simplifiedTodo struct {
+		ID           uuid.UUID
+		Title        string
+		Completed    bool
+		CreationDate time.Time
+	}
+
+	u, err := uuid.Parse(t.ID.String())
+
+	st := simplifiedTodo{
+		ID:           u,
+		Title:        *t.Title,
+		Completed:    t.Completed,
+		CreationDate: time.Time(t.CreationDate),
+	}
+
 	// Marshall the Item into a Map DynamoDB can deal with
-	av, err := dynamodbattribute.MarshalMap(t)
+	av, err := dynamodbattribute.MarshalMap(st)
 	if err != nil {
 		fmt.Println("Got error marshalling map:")
 		fmt.Println(err.Error())
