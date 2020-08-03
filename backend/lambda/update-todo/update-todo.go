@@ -10,31 +10,40 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/google/uuid"
 
 	"github.com/aws/aws-lambda-go/lambda"
 
-	"github.com/seanrmurphy/go-fullstack/backend/model"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
 	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/util"
+	"github.com/seanrmurphy/vugu-tdl-async/models"
 )
 
 var tableName string
 
 // UpdateTodo updates a given todo in the dynamodb database
-func UpdateTodo(t model.Todo) (model.Todo, error) {
+func UpdateTodo(t models.Todo) (models.Todo, error) {
 
 	// Create the dynamo client object
 	sess := session.Must(session.NewSession())
 	svc := dynamodb.New(sess)
 
-	uuidBinary, _ := t.ID.MarshalBinary()
+	u, err := uuid.Parse(t.ID.String())
+	if err != nil {
+		fmt.Println(err.Error())
+		return t, err
+	}
+
+	d := time.Time(t.CreationDate)
+
+	uuidBinary, _ := u.MarshalBinary()
 	input := &dynamodb.UpdateItemInput{
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
 			":t": {
-				S: aws.String(t.Title),
+				S: aws.String(*t.Title),
 			},
 			":d": {
-				S: aws.String(t.CreationDate.Format(time.RFC3339Nano)),
+				S: aws.String(d.Format(time.RFC3339Nano)),
 			},
 			":c": {
 				BOOL: aws.Bool(t.Completed),
@@ -50,7 +59,7 @@ func UpdateTodo(t model.Todo) (model.Todo, error) {
 		UpdateExpression: aws.String("set Title = :t, Completed = :c, CreationDate = :d"),
 	}
 
-	_, err := svc.UpdateItem(input)
+	_, err = svc.UpdateItem(input)
 	if err != nil {
 		fmt.Println(err.Error())
 		return t, err
@@ -78,13 +87,13 @@ func HandleRequest(m types.Message) (types.Response, error) {
 	//}, nil
 	//}
 
-	t := model.Todo{}
+	t := models.Todo{}
 	_ = json.Unmarshal([]byte(m.Data), &t)
 	var err error
 	//t.ID, err = uuid.Parse(id)
 	log.Printf("Received Todo: %s\n", t)
 
-	returnedTodo := model.Todo{}
+	returnedTodo := models.Todo{}
 	returnedTodo, err = UpdateTodo(t)
 	if err != nil {
 		e := util.CreateResponse("update-todo-response", "NOK", "Error updating todo in DB...", "")

@@ -54,7 +54,7 @@
 </style>
 
 <script type="application/x-go">
-import "github.com/seanrmurphy/vugu-tdl-swagger/swagger/models"
+import "github.com/seanrmurphy/vugu-tdl-async/models"
 
 type ToDoList struct {
 	Todos map[string]models.Todo `vugu:"data"`

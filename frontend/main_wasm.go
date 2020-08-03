@@ -11,9 +11,9 @@ import (
 
 	"flag"
 
-	"github.com/seanrmurphy/vugu-tdl-swagger/swagger/models"
+	"github.com/seanrmurphy/vugu-tdl-async/models"
 
-"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
+	"github.com/seanrmurphy/vugu-tdl-async/backend/lambda/types"
 	"github.com/vugu/vugu"
 	"github.com/vugu/vugu/domrender"
 	"nhooyr.io/websocket"
