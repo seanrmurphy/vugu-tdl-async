@@ -1,0 +1,48 @@
+
+<html>
+
+<head>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+</head>
+
+<div>
+    <main role="main" class="container text-center">
+
+        <div>
+                <div class="navbar has-text-white has-background-primary">
+                        <div class="navbar-brand">
+                               <h1>Vugu/Serverless/Websockets demo</h1>
+                        </div>
+                </div>
+
+                <div>
+                        <vg-comp expr="c.Body"/>
+                </div>
+
+        </div>
+
+    </main>
+</div>
+
+</html>
+
+
+<script type="application/x-go">
+
+import (
+	"github.com/vugu/vgrouter"
+	"github.com/vugu/vugu"
+)
+
+type Root struct {
+	// ANYTHING THAT MUST NAVIGATE NEED ONLY EMBED THIS
+	vgrouter.NavigatorRef
+
+	// THE BODY COMPONENT, GETS SET BY THE APPROPRIATE ROUTE ABOVE
+	Body vugu.Builder
+
+	events vugu.EventEnv
+}
+
+</script>
